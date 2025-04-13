@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: xyz-nodeport-svc
+spec:
+  selector:
+    app: xyz_deploy
+  ports:
+    - protocol: TCP
+      port: 80          # Expose this port within the cluster
+      targetPort: 8080  # Forward to containerPort
+  type: NodePort        # Useful for debugging, but Ingress will use the ClusterIP internally
