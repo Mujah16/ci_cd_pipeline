@@ -1,20 +1,16 @@
 ---
 - name: Deploy to Minikube Kubernetes
-  hosts: k8s_master
-  become: yes
+  hosts: localhost
+  connection: local
+  become: false
   gather_facts: no
   vars:
     image_name: "mujah92/xyz_tech"
     build_number: "{{ lookup('env', 'BUILD_NUMBER') }}"
     k8s_dir: "{{ workspace }}/k8s"
-    minikube_ssh_user: "docker"
-    minikube_ssh_key: "{{ lookup('env', 'HOME') }}/.minikube/machines/minikube/id_rsa"
+    kubeconfig_path: "{{ lookup('env', 'HOME') }}/.kube/config"
 
   tasks:
-    - name: Verify Minikube SSH connection
-      wait_for_connection:
-        timeout: 30
-
     - name: Ensure kubectl is configured
       command: minikube kubectl -- get nodes
       register: kube_check
@@ -31,18 +27,17 @@
         path: "{{ k8s_dir }}/xyz_tech_deployment.yaml"
         regexp: "mujah92/xyz_tech:.*"
         replace: "mujah92/xyz_tech:{{ build_number }}"
-      delegate_to: localhost  # Run on control node
 
     - name: Apply Kubernetes manifests
       k8s:
         state: present
-        kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config"
+        kubeconfig: "{{ kubeconfig_path }}"
         definition: "{{ lookup('template', item) | from_yaml }}"
       loop:
         - "{{ k8s_dir }}/xyz_tech_deployment.yaml"
         - "{{ k8s_dir }}/xyz_tech_service.yaml"
       environment:
-        KUBECONFIG: "{{ lookup('env', 'HOME') }}/.kube/config"
+        KUBECONFIG: "{{ kubeconfig_path }}"
 
     - name: Verify deployment status
       command: minikube kubectl -- rollout status deployment/xyz-tech --timeout=120s
@@ -59,6 +54,6 @@
     - name: Show access information
       debug:
         msg: |
-          Deployment Successful!
-          Access your application at: {{ service_url.stdout }}
-          Or run: minikube service xyz-tech-service
+          ✅ Deployment Successful!
+          🌐 Access your application at: {{ service_url.stdout }}
+          🔁 Or run manually: minikube service xyz-tech-service
