@@ -1,75 +1,112 @@
 pipeline
 {
-	agent any
+    agent none
 	stages
 	{
-		stage('Code Checkout')
+	    
+		stage('Task 1 - Code Checkout')
 		{
+		    agent any
 			steps
 			{
 				git 'https://github.com/Mujah16/ci_cd_pipeline.git'
 			}
 		}
 		
-		stage('Code Compile')
+		stage('Task 2 - Code Compile')
 		{
+		    agent any
 			steps
 			{
 				sh 'mvn compile'
 			}
 		}
 
-		stage('Code Test')
+		stage('Task 2 - Code Test')
 		{
+		    agent any
 			steps
 			{
 				sh 'mvn test'
 			}
 		}
 
-		stage('Code Build')
+		stage('Task 2 - Code Build')
 		{
+			agent any
 			steps
 			{
-				sh 'mvn package'
+				sh 'mvn clean package'
+				sh 'cp /var/lib/jenkins/workspace/$JOB_NAME/target/XYZtechnologies-1.0.war xyz_tech.war'
+				stash name: 'build-artifacts', includes: 'xyz_tech.war,Dockerfile'
 			}
 		}
 
 
-		stage('Build Docker Image')
-		{
-			steps
-			{
-				sh 'cp /var/lib/jenkins/workspace/$JOB_NAME/target/XYZtechnologies-1.0.war /var/lib/jenkins/workspace/$JOB_NAME/xyz_tech.war'
-				sh 'docker build -t xyz_tech:$BUILD_NUMBER .'
-				sh 'docker tag xyz_tech:$BUILD_NUMBER mujah92/xyz_tech:$BUILD_NUMBER'
-			}
-		}
+		// stage('Task 3 - Build Docker Image')
+		// {
+		// 	agent {
+        //         label 'docker'  // Targets the slave with label 'docker'
+        //     }
+		// 	steps
+		// 	{
+		// 		unstash 'build-artifacts'  // Retrieve the WAR file from stash				
+		// 		sh 'docker build -t xyz_tech:$BUILD_NUMBER .'
+		// 		sh 'docker tag xyz_tech:$BUILD_NUMBER mujah92/xyz_tech:$BUILD_NUMBER'
+				
+		// 	}
+		// }
 
-		stage('Push Docker Image')
-		{ 
-			steps
-			{   
-			    withDockerRegistry([ credentialsId: "docker_hub_credentials", url: "" ])
-			    {
-			       sh 'docker push mujah92/xyz_tech:$BUILD_NUMBER'
-			    }
-			}
-		}
+		// stage('Task 3 - Deploy on a container')
+		// {
+		//     agent {
+        //         label 'docker'  // Targets the slave with label 'docker'
+        //     }
+		// 	steps
+		// 	{
+		// 		sh 'docker run -itd -P xyz_tech:$BUILD_NUMBER'
+		// 	}
+		// }
 		
+		stage('Task 4  - Ansible Docker Build, Push and Deploy') {
+			agent any
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'docker_hub_credentials',
+                        usernameVariable: 'REGISTRY_USER',
+                        passwordVariable: 'REGISTRY_PASS'
+                    )
+                ]) {
+                    ansiblePlaybook(
+                        playbook: "${WORKSPACE}/ansible/docker-deploy.yml",
+                        inventory: "${WORKSPACE}/ansible/inventory.ini",
+                        extras: """
+                            -e 'registry_username=${REGISTRY_USER}'
+                            -e 'registry_password=${REGISTRY_PASS}'
+                            -e "workspace=${WORKSPACE}"
+                            -e "build_number=${BUILD_NUMBER}"
+                            -e 'push_to_registry=true' 
+                            -e "ansible_python_interpreter=/usr/bin/python3"
+                        """.stripIndent(),
+                        colorized: true
+                    )
+                }
+            }
+        }
 
-		stage('Deploy to k8s cluster ')
-		{
-			steps
-			{
-
-			    sh 'sed -i "s|mujah92/xyz_tech:latest|mujah92/xyz_tech:${BUILD_NUMBER}|g" xyz_tech_deployment.yaml'
-				sh 'minikube kubectl -- apply -f xyz_tech_deployment.yaml'
-                sh 'minikube kubectl -- apply -f xyz_tech_service.yaml'
-                sh 'minikube kubectl -- apply -f xyz_tech_ingress.yaml'
+		stage('Deploy to Minikube') {
+			steps {
+				ansiblePlaybook(
+					playbook: 'ansible/k8s-deploy.yml',
+					inventory: 'ansible/inventory.ini',
+					extras: """
+						-e "workspace=${WORKSPACE}"
+						-e "build_number=${BUILD_NUMBER}"
+					"""
+				)
 			}
 		}
-
 
    }
 }

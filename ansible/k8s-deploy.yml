@@ -28,16 +28,12 @@
         regexp: "mujah92/xyz_tech:.*"
         replace: "mujah92/xyz_tech:{{ build_number }}"
 
-    - name: Apply Kubernetes manifests
-      k8s:
-        state: present
-        kubeconfig: "{{ kubeconfig_path }}"
-        definition: "{{ lookup('template', item) | from_yaml }}"
-      loop:
-        - "{{ k8s_dir }}/xyz_tech_deployment.yaml"
-        - "{{ k8s_dir }}/xyz_tech_service.yaml"
-      environment:
-        KUBECONFIG: "{{ kubeconfig_path }}"
+    - name: Apply manifests using minikube
+      command: "minikube kubectl -- apply -f {{ k8s_dir }}/"
+      args:
+        chdir: "{{ workspace }}"
+      register: apply
+      changed_when: "'created' in apply.stdout or 'configured' in apply.stdout"
 
     - name: Verify deployment status
       command: minikube kubectl -- rollout status deployment/xyz-tech --timeout=120s
