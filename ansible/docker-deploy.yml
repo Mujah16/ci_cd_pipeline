@@ -1,0 +1,46 @@
+---
+- name: Build and Deploy Docker Container
+  hosts: docker_hosts
+  become: yes
+  vars:
+    image_name: "mujah92/xyz_tech"
+    container_name: "xyz_app"
+    build_number: "{{ lookup('env', 'BUILD_NUMBER') }}"
+    app_port: 8080
+
+  tasks:
+    - name: Copy source files
+      copy:
+        src: "{{ workspace }}/target/"
+        dest: "/tmp/build"
+
+    - name: Build Docker image
+      docker_image:
+        name: "{{ image_name }}:{{ build_number }}"
+        build:
+          path: "/tmp/build"
+          dockerfile: "{{ workspace }}/Dockerfile"
+        source: build
+        force_source: yes
+
+    - name: Authenticate
+      docker_login:
+        username: "{{ registry_username }}"
+        password: "{{ registry_password }}"
+      when: push_to_registry
+      no_log: true
+
+    - name: Push image
+      docker_image:
+        name: "{{ image_name }}:{{ build_number }}"
+        push: yes
+      when: push_to_registry
+
+    - name: Run container
+      docker_container:
+        name: "{{ container_name }}"
+        image: "{{ image_name }}:{{ build_number }}"
+        ports:
+          - "{{ host_port }}:{{ app_port }}"
+        state: started
+        restart_policy: unless-stopped
