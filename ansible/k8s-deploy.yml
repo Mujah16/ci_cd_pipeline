@@ -17,18 +17,13 @@
       changed_when: false
       ignore_errors: yes
 
-    - name: Configure Minikube context if needed
-      command: minikube update-context
-      when: kube_check.failed
-      changed_when: kube_check.failed
-
     - name: Update image tag in deployment
       replace:
         path: "{{ k8s_dir }}/xyz_tech_deployment.yaml"
         regexp: "mujah92/xyz_tech:.*"
         replace: "mujah92/xyz_tech:{{ build_number }}"
 
-    - name: Apply manifests using minikube
+    - name: Deploy to Kubernetes
       command: "minikube kubectl -- apply -f {{ k8s_dir }}/"
       args:
         chdir: "{{ workspace }}"
@@ -42,13 +37,9 @@
       retries: 10
       delay: 10
 
-    - name: Get service access URL
-      command: minikube service xyz-tech-service --url
-      register: service_url
-      changed_when: false
-
     - name: Show access information
       debug:
         msg: |
-          Deployment Successful!
-          Access your application at: {{ service_url.stdout }}/xyz_tech
+          DEPLOYMENT SUCCESSFUL
+          Application URL: $(minikube service xyz-tech-service --url)/xyz_tech 
+          Dashboard URL: $(minikube dashboard --url)
