@@ -46,7 +46,7 @@
         username: "{{ registry_username }}"
         password: "{{ registry_password }}"
       when: push_to_registry
-      no_log: true
+
 
     - name: Push image
       docker_image:
