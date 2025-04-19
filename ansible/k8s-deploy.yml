@@ -31,23 +31,19 @@
       changed_when: "'created' in apply.stdout or 'configured' in apply.stdout"
 
     - name: Get Kubernetes dashboard URL
-  command: minikube dashboard --url
-  register: k8s_dashboard_url
-  changed_when: false
+      command: minikube dashboard --url
+      register: k8s_dashboard_url
+      changed_when: false
 
-- name: Get application service URL
-  command: minikube service xyz-tech-service --url
-  register: app_service_url
-  changed_when: false
+    - name: Get application service URL
+      command: minikube service xyz-tech-service --url
+      register: app_service_url
+      changed_when: false
 
-- name: Launch dashboard in background
-  command: minikube dashboard
-  async: 300  # Allow 5 minutes for dashboard
-  poll: 0     # Don't wait for completion
 
-- name: Display all access URLs
-  debug:
-    msg: |
-      ACCESS URLs:
-      - Kubernetes Dashboard: {{ k8s_dashboard_url.stdout }}
-      - Your Application: {{ app_service_url.stdout }}/xyz_tech
+    - name: Display all access URLs
+      debug:
+        msg: |
+          ACCESS URLs:
+          - Kubernetes Dashboard: {{ k8s_dashboard_url.stdout }}
+          - Your Application: {{ app_service_url.stdout }}/xyz_tech
