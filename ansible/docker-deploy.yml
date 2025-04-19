@@ -3,25 +3,42 @@
   hosts: docker_hosts
   become: yes
   vars:
-    image_name: "mujah92/xyz_tech"
     container_name: "xyz_app"
     build_number: "{{ lookup('env', 'BUILD_NUMBER') }}"
     app_port: 8080
 
   tasks:
-    - name: Copy source files
+    - name: Create build directory
+      file:
+        path: "/tmp/build"
+        state: directory
+        mode: '0755'
+
+    - name: Copy and rename WAR file
       copy:
-        src: "{{ workspace }}/target/"
-        dest: "/tmp/build"
+        src: "{{ workspace }}/target/XYZtechnologies-1.0.war"
+        dest: "/tmp/build/xyz_tech.war"
+        remote_src: no  # Copies from control machine
+
+    - name: Copy Dockerfile
+      copy:
+        src: "{{ workspace }}/Dockerfile"
+        dest: "/tmp/build/Dockerfile"
+        remote_src: no
 
     - name: Build Docker image
-      docker_image:
+      community.docker.docker_image:
         name: "{{ image_name }}:{{ build_number }}"
         build:
           path: "/tmp/build"
-          dockerfile: "{{ workspace }}/Dockerfile"
+          dockerfile: "Dockerfile"
         source: build
         force_source: yes
+
+    - name: Clean up build directory
+      file:
+        path: "/tmp/build"
+        state: absent
 
     - name: Authenticate
       docker_login:
