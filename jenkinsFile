@@ -43,7 +43,7 @@ pipeline
 		}
 
 		// Task [Task 3 - Build Docker Image + Task 3 - Deploy on a container] has been enhanced in [Task 4  - Ansible Docker Build, Push and Deploy]
-		
+
 		// stage('Task 3 - Build Docker Image')
 		// {
 		// 	agent {
@@ -69,7 +69,7 @@ pipeline
 		// 	}
 		// }
 		
-		stage('Task 4  - Ansible Docker Build, Push and Deploy') {
+		stage('Task 4 - Ansible Docker Build, Push and Deploy') {
 			agent any
             steps {
                 withCredentials([
@@ -96,7 +96,7 @@ pipeline
             }
         }
 
-		stage('Task 4  - Ansible K8s Deploy') {
+		stage('Task 4 - Ansible K8s Deploy') {
 			steps {
 				ansiblePlaybook(
 					playbook: 'ansible/k8s-deploy.yml',
