@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: xyz-tech-service
 spec:
-  type: NodePort  # For Minikube access
+  type: NodePort 
   selector:
     app: xyz-tech
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
-      nodePort: 30080  # Minikube accessible port
+      nodePort: 30080

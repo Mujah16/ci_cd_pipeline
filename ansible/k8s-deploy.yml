@@ -50,6 +50,5 @@
     - name: Show access information
       debug:
         msg: |
-          ✅ Deployment Successful!
-          🌐 Access your application at: {{ service_url.stdout }}
-          🔁 Or run manually: minikube service xyz-tech-service
+          Deployment Successful!
+          Access your application at: {{ service_url.stdout }}/xyz_tech

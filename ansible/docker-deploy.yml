@@ -21,7 +21,7 @@
       copy:
         src: "{{ workspace }}/target/XYZtechnologies-1.0.war"
         dest: "/tmp/build/xyz_tech.war"
-        remote_src: no  # Copies from control machine
+        remote_src: no 
 
     - name: Copy Dockerfile
       copy:
