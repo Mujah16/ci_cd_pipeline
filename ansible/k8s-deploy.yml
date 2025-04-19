@@ -2,51 +2,63 @@
 - name: Deploy to Minikube Kubernetes
   hosts: k8s_master
   become: yes
+  gather_facts: no
   vars:
     image_name: "mujah92/xyz_tech"
     build_number: "{{ lookup('env', 'BUILD_NUMBER') }}"
     k8s_dir: "{{ workspace }}/k8s"
+    minikube_ssh_user: "docker"
+    minikube_ssh_key: "{{ lookup('env', 'HOME') }}/.minikube/machines/minikube/id_rsa"
 
   tasks:
-    - name: Ensure kubectl is configured for Minikube
+    - name: Verify Minikube SSH connection
+      wait_for_connection:
+        timeout: 30
+
+    - name: Ensure kubectl is configured
       command: minikube kubectl -- get nodes
       register: kube_check
       changed_when: false
       ignore_errors: yes
 
-    - name: Configure Minikube context
+    - name: Configure Minikube context if needed
       command: minikube update-context
       when: kube_check.failed
+      changed_when: kube_check.failed
 
     - name: Update image tag in deployment
       replace:
         path: "{{ k8s_dir }}/xyz_tech_deployment.yaml"
         regexp: "mujah92/xyz_tech:.*"
         replace: "mujah92/xyz_tech:{{ build_number }}"
+      delegate_to: localhost  # Run on control node
 
     - name: Apply Kubernetes manifests
       k8s:
         state: present
-        definition: "{{ lookup('file', item) | from_yaml }}"
+        kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config"
+        definition: "{{ lookup('template', item) | from_yaml }}"
       loop:
         - "{{ k8s_dir }}/xyz_tech_deployment.yaml"
         - "{{ k8s_dir }}/xyz_tech_service.yaml"
+      environment:
+        KUBECONFIG: "{{ lookup('env', 'HOME') }}/.kube/config"
 
-    - name: Verify deployment
-      command: minikube kubectl -- rollout status deployment/xyz-tech
+    - name: Verify deployment status
+      command: minikube kubectl -- rollout status deployment/xyz-tech --timeout=120s
       register: rollout
-      until: rollout.stdout.find("successfully rolled out") != -1
+      until: rollout.rc == 0
       retries: 10
-      delay: 5
+      delay: 10
 
-    - name: Get Minikube service URL
+    - name: Get service access URL
       command: minikube service xyz-tech-service --url
       register: service_url
       changed_when: false
 
-    - name: Display access information
+    - name: Show access information
       debug:
         msg: |
-          Application deployed successfully!
-          Access via: {{ service_url.stdout }}
+          Deployment Successful!
+          Access your application at: {{ service_url.stdout }}
           Or run: minikube service xyz-tech-service
