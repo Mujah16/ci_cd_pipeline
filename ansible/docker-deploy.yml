@@ -8,6 +8,7 @@
     image_name: "mujah92/xyz_tech"
     build_number: "{{ lookup('env', 'BUILD_NUMBER') }}"
     app_port: 8080
+    host_port: 8000
 
   tasks:
     - name: Create build directory
