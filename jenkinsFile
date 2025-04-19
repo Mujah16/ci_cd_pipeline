@@ -99,8 +99,8 @@ pipeline
 		stage('Task 4 - Ansible K8s Deploy') {
 			steps {
 				ansiblePlaybook(
-					playbook: 'ansible/k8s-deploy.yml',
-					inventory: 'ansible/inventory.ini',
+					playbook: "${WORKSPACE}/ansible/k8s-deploy.yml",
+					inventory: "${WORKSPACE}/ansible/inventory.ini",
 					extras: """
 						-e "workspace=${WORKSPACE}"
 						-e "build_number=${BUILD_NUMBER}"
