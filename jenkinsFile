@@ -80,15 +80,15 @@ pipeline
                     )
                 ]) {
                     ansiblePlaybook(
-                        playbook: "${WORKSPACE}/ansible/docker-deploy.yml",
-                        inventory: "${WORKSPACE}/ansible/inventory.ini",
+                        playbook: '${WORKSPACE}/ansible/docker-deploy.yml',
+                        inventory: '${WORKSPACE}/ansible/inventory.ini',
                         extras: """
                             -e 'registry_username=${REGISTRY_USER}'
                             -e 'registry_password=${REGISTRY_PASS}'
-                            -e "workspace=${WORKSPACE}"
-                            -e "build_number=${BUILD_NUMBER}"
+                            -e 'workspace=${WORKSPACE}'
+                            -e 'build_number=${BUILD_NUMBER}'
                             -e 'push_to_registry=true' 
-                            -e "ansible_python_interpreter=/usr/bin/python3"
+                            -e 'ansible_python_interpreter=/usr/bin/python3'
                         """.stripIndent(),
                         colorized: true
                     )
@@ -99,11 +99,11 @@ pipeline
 		stage('Task 4 - Ansible K8s Deploy') {
 			steps {
 				ansiblePlaybook(
-					playbook: "${WORKSPACE}/ansible/k8s-deploy.yml",
-					inventory: "${WORKSPACE}/ansible/inventory.ini",
+					playbook: '${WORKSPACE}/ansible/k8s-deploy.yml',
+					inventory: '${WORKSPACE}/ansible/inventory.ini',
 					extras: """
-						-e "workspace=${WORKSPACE}"
-						-e "build_number=${BUILD_NUMBER}"
+						-e 'workspace=${WORKSPACE}'
+						-e 'build_number=${BUILD_NUMBER}'
 					"""
 				)
 			}
