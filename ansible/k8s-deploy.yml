@@ -39,6 +39,4 @@
     - name: Display all access URLs
       debug:
         msg: |
-          ACCESS URLs:
-          - Kubernetes Dashboard: {{ k8s_dashboard_url.stdout }}
-          - Your Application: {{ app_service_url.stdout }}/xyz_tech
+          - Application Url: {{ app_service_url.stdout }}/xyz_tech
