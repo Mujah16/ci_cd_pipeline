@@ -30,11 +30,6 @@
       register: apply
       changed_when: "'created' in apply.stdout or 'configured' in apply.stdout"
 
-    - name: Get Kubernetes dashboard URL
-      command: minikube dashboard --url
-      register: k8s_dashboard_url
-      changed_when: false
-
     - name: Get application service URL
       command: minikube service xyz-tech-service --url
       register: app_service_url

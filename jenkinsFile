@@ -80,8 +80,8 @@ pipeline
                     )
                 ]) {
                     ansiblePlaybook(
-                        playbook: '${WORKSPACE}/ansible/docker-deploy.yml',
-                        inventory: '${WORKSPACE}/ansible/inventory.ini',
+                        playbook: "${WORKSPACE}/ansible/docker-deploy.yml",
+                        inventory: "${WORKSPACE}/ansible/inventory.ini",
                         extras: """
                             -e 'registry_username=${REGISTRY_USER}'
                             -e 'registry_password=${REGISTRY_PASS}'
@@ -97,10 +97,11 @@ pipeline
         }
 
 		stage('Task 4 - Ansible K8s Deploy') {
+			agent any
 			steps {
 				ansiblePlaybook(
-					playbook: '${WORKSPACE}/ansible/k8s-deploy.yml',
-					inventory: '${WORKSPACE}/ansible/inventory.ini',
+					playbook: "${WORKSPACE}/ansible/k8s-deploy.yml",
+					inventory: "${WORKSPACE}/ansible/inventory.ini",
 					extras: """
 						-e 'workspace=${WORKSPACE}'
 						-e 'build_number=${BUILD_NUMBER}'
