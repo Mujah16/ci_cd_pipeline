@@ -11,23 +11,6 @@
 - **Ansible** playbooks/roles in `/ansible` for environment automation.  
 - **Prometheus** scrape config (`prometheus.yml`) as a starter for metrics.
 
----
-
-## 🧭 Architecture (high level)
-
-```mermaid
-flowchart LR
-  A[GitHub Repo] -->|Webhook| B[Jenkins]
-  B --> C[Build & Test (Maven)]
-  C --> D[Docker Build]
-  D --> E[(Container Registry)]
-  E --> F[Kubernetes Deploy (k8s/)]
-  B --> G[Ansible Tasks (ansible/)]
-  F --> H[Running App]
-  H --> I[Prometheus Scrape (prometheus.yml)]
-```
-
----
 
 ## 📁 Repository layout
 
