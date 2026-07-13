@@ -128,8 +128,8 @@ ansible --version
 
 ```bash
 # Clone the repository
-git clone https://github.com/Mujah16/ci_cd_pipeline.git
-cd ci_cd_pipeline
+git clone https://github.com/Mujah16/devops-ci-cd-pipeline.git
+cd devops-ci-cd-pipeline
 
 # Clean and build
 mvn clean package
@@ -184,7 +184,7 @@ http://localhost:8080/XYZtechnologies-1.0
 
 ```bash
 # Navigate to project directory
-cd /var/home/joe/projects/ci_cd_pipeline
+cd /var/home/joe/projects/devops-ci-cd-pipeline
 
 # Build the WAR file first
 mvn clean package
@@ -450,7 +450,7 @@ retry_files_enabled = False
 ```bash
 # Set environment variables
 export BUILD_NUMBER=123
-export WORKSPACE=/var/home/joe/projects/ci_cd_pipeline
+export WORKSPACE=/var/home/joe/projects/devops-ci-cd-pipeline
 export REGISTRY_USER=your_docker_username
 export REGISTRY_PASS=your_docker_password
 
@@ -469,7 +469,7 @@ ansible-playbook ansible/docker-deploy.yml \
 ```bash
 # Set environment variables
 export BUILD_NUMBER=123
-export WORKSPACE=/var/home/joe/projects/ci_cd_pipeline
+export WORKSPACE=/var/home/joe/projects/devops-ci-cd-pipeline
 
 # Run Kubernetes deployment playbook
 ansible-playbook ansible/k8s-deploy.yml \
@@ -538,7 +538,7 @@ kubectl get services
 2. **Pipeline configuration**:
    - Definition: Pipeline script from SCM
    - SCM: Git
-   - Repository URL: `https://github.com/Mujah16/ci_cd_pipeline.git`
+   - Repository URL: `https://github.com/Mujah16/devops-ci-cd-pipeline.git`
    - Script Path: `Jenkinsfile`
 
 #### Configure Build Triggers

@@ -35,13 +35,13 @@ Before contributing, ensure you have the following installed:
    ```bash
    # Fork the repository on GitHub
    # Clone your fork locally
-   git clone https://github.com/YOUR_USERNAME/ci_cd_pipeline.git
-   cd ci_cd_pipeline
+   git clone https://github.com/YOUR_USERNAME/devops-ci-cd-pipeline.git
+   cd devops-ci-cd-pipeline
    ```
 
 2. **Add Upstream Remote**
    ```bash
-   git remote add upstream https://github.com/Mujah16/ci_cd_pipeline.git
+   git remote add upstream https://github.com/Mujah16/devops-ci-cd-pipeline.git
    ```
 
 3. **Install Dependencies**

@@ -103,8 +103,8 @@ The Jenkins pipeline (`Jenkinsfile`) executes the following stages:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Mujah16/ci_cd_pipeline.git
-cd ci_cd_pipeline
+git clone https://github.com/Mujah16/devops-ci-cd-pipeline.git
+cd devops-ci-cd-pipeline
 ```
 
 ### 2. Local Development Setup
@@ -158,7 +158,7 @@ Edit `ansible/inventory.ini`:
 ## 📁 Repository Structure
 
 ```
-ci_cd_pipeline/
+devops-ci-cd-pipeline/
 ├── ansible/                          # Ansible playbooks and inventory
 │   ├── ansible.cfg                   # Ansible configuration
 │   ├── docker-deploy.yml             # Docker build and deployment playbook

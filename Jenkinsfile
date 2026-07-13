@@ -9,7 +9,7 @@ pipeline
 		    agent any
 			steps
 			{
-				git 'https://github.com/Mujah16/ci_cd_pipeline.git'
+				git 'https://github.com/Mujah16/devops-ci-cd-pipeline.git'
 			}
 		}
 		
