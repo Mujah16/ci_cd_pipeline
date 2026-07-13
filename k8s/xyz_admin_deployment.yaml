@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: xyz-tech
+  name: xyz-admin
   labels:
-    app: xyz-tech
+    app: xyz-admin
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: xyz-tech
+      app: xyz-admin
   template:
     metadata:
       labels:
-        app: xyz-tech
+        app: xyz-admin
     spec:
       containers:
-      - name: xyz-tech
-        image: mujah92/xyz_tech:{{ build_number }}
+      - name: xyz-admin
+        image: mujah92/xyz-admin-module:{{ build_number }}
         ports:
         - containerPort: 8080
         imagePullPolicy: Always

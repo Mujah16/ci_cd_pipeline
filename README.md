@@ -1,95 +1,314 @@
-# CI/CD Pipeline with Jenkins, Docker, and Kubernetes
+# DevOps CI/CD Pipeline
 
-This repository contains the **Final Grades project**, showcasing a fully automated **CI/CD pipeline** built with **Jenkins**, **Docker**, and **Kubernetes**.  
-The pipeline demonstrates modern DevOps practices: continuous integration, automated testing, containerization, and deployment into a Kubernetes cluster.
+A comprehensive **DevOps CI/CD pipeline** demonstrating modern software delivery practices. This project showcases end-to-end automation using **Jenkins**, **Docker**, **Ansible**, and **Kubernetes** for building, testing, containerizing, and deploying applications.
 
----
+## 🎯 Project Overview
 
-## 🚀 Features
+This repository demonstrates a complete DevOps lifecycle from code commit to production deployment. The pipeline implements industry-standard practices for continuous integration, containerization, infrastructure as code, and orchestration.
 
-- **Automated CI/CD** with Jenkins Declarative Pipeline (`Jenkinsfile`)
-- **Build & Test**: Compiles application code and runs automated unit tests
-- **Containerization**: Builds a Docker image of the application
-- **Artifact Management**: Stores versioned images in Docker Hub (or any registry)
-- **Kubernetes Deployment**:
-  - Deploys the containerized application into a Kubernetes cluster
-  - Manages rollouts and rollbacks with `kubectl`
-- **Stage Isolation**: Clear stages for build, test, package, deploy, and cleanup
+### 🏗️ DevOps Architecture
 
----
-
-## 🛠️ Pipeline Overview
-
-The `Jenkinsfile` defines the following stages:
-
-1. **Checkout**  
-   - Fetches source code from GitHub.
-
-2. **Build**  
-   - Compiles the code (Gradle/Maven/npm depending on the project).  
-   - Ensures the build artifacts are ready for packaging.
-
-3. **Test**  
-   - Executes unit and integration tests.  
-   - Reports results back to Jenkins.
-
-4. **Docker Build & Push**  
-   - Builds a Docker image using the project’s `Dockerfile`.  
-   - Pushes the image to Docker Hub (or a private registry).
-
-5. **Deploy to Kubernetes**  
-   - Applies Kubernetes manifests (`deployment.yaml`, `service.yaml`).  
-   - Performs rolling update with zero downtime.
-
-6. **Post Actions**  
-   - Sends notifications (success/failure).  
-   - Cleans up workspace.
+- **CI/CD**: Jenkins declarative pipeline with automated stages
+- **Containerization**: Docker with multi-stage builds
+- **Configuration Management**: Ansible for infrastructure automation
+- **Orchestration**: Kubernetes (Minikube) for container management
+- **Quality**: Automated testing with JaCoCo code coverage
+- **Monitoring**: Prometheus integration for observability
+- **Artifact Management**: Docker Hub registry integration
 
 ---
 
-## 📦 Usage Instructions
+## 🚀 Key Features
 
-### Prerequisites
-- Jenkins server with the following plugins:
-  - **Pipeline**
-  - **Docker**
-  - **Kubernetes CLI**
-- Docker installed and configured with registry credentials
-- Access to a Kubernetes cluster (Minikube, GKE, EKS, AKS, etc.)
+### CI/CD Pipeline
+- **Automated Build**: Maven-based compilation and packaging
+- **Automated Testing**: JUnit test execution with coverage reporting
+- **Container Orchestration**: Docker image building and registry management
+- **Infrastructure as Code**: Ansible playbooks for deployment automation
+- **Kubernetes Deployment**: Automated deployment to Minikube cluster
+- **Zero Downtime**: Rolling updates with Kubernetes
 
-### Setup
-
-1. **Clone Repository**
-   ```bash
-   git clone https://github.com/Mujah16/ci_cd_pipeline.git
-   cd ci_cd_pipeline
-   ```
-
-2. **Configure Jenkins Job**
-   - Create a new **Pipeline job** in Jenkins.
-   - Point the job to this GitHub repo.
-   - Select `Pipeline script from SCM`.
-
-3. **Set Environment Variables in Jenkins**
-   - `DOCKER_USER` → Docker registry username  
-   - `DOCKER_PASS` → Docker registry password  
-   - `KUBE_CONFIG` → Path to Kubernetes config (or mount inside Jenkins agent)  
-
-4. **Run the Pipeline**
-   - Trigger the pipeline manually or on `git push`.  
-   - Watch Jenkins stages for build, test, Docker push, and Kubernetes deploy.
+### Development Tools
+- **Build Tool**: Apache Maven
+- **Testing Framework**: JUnit 4.4
+- **Code Coverage**: JaCoCo 0.8.6
+- **Container Runtime**: Docker
+- **Configuration Management**: Ansible
+- **Container Orchestration**: Kubernetes (Minikube)
+- **Monitoring**: Prometheus
 
 ---
 
+## 🛠️ Pipeline Stages
 
-## 📄 Repository Structure
+The Jenkins pipeline (`Jenkinsfile`) executes the following stages:
+
+### 1. Code Checkout
+- Clones the repository from GitHub
+- Ensures workspace is clean and up-to-date
+
+### 2. Code Compile
+- Compiles Java source code using Maven
+- Validates syntax and dependencies
+
+### 3. Code Test
+- Executes JUnit unit tests
+- Generates test reports
+- Runs JaCoCo code coverage analysis
+
+### 4. Code Build
+- Creates WAR artifact (`xyz-admin-module-1.0.war`)
+- Packages application for deployment
+- Stashes build artifacts for subsequent stages
+
+### 5. Ansible Docker Build, Push and Deploy
+- Builds Docker image using Ansible
+- Authenticates with Docker registry
+- Pushes versioned image to Docker Hub
+- Deploys container on Docker host
+
+### 6. Ansible K8s Deploy
+- Updates Kubernetes deployment manifests
+- Applies configuration to Minikube cluster
+- Performs rolling update with zero downtime
+- Retrieves and displays application service URL
+
+---
+
+## 📦 Prerequisites
+
+### Software Requirements
+- **Jenkins** 2.x with Pipeline plugin
+- **Docker** 20.x+
+- **Ansible** 2.9+
+- **Minikube** 1.25+ (or any Kubernetes cluster)
+- **Maven** 3.6+
+- **Java** 8 JDK
+- **kubectl** configured for cluster access
+
+### Jenkins Plugins
+- Pipeline
+- Docker Pipeline
+- Ansible Plugin
+- Git Plugin
+
+### Credentials Required
+- Docker Hub credentials (username/password)
+- SSH key for Ansible Docker host access
+- Kubernetes configuration (kubeconfig)
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Mujah16/ci_cd_pipeline.git
+cd ci_cd_pipeline
+```
+
+### 2. Local Development Setup
+```bash
+# Install dependencies
+mvn clean install
+
+# Run tests
+mvn test
+
+# Build WAR file
+mvn clean package
+```
+
+### 3. Jenkins Configuration
+
+#### Create Pipeline Job
+1. Create new Jenkins job → Pipeline
+2. Configure SCM: Git repository URL
+3. Select "Pipeline script from SCM"
+4. Set Script Path: `Jenkinsfile`
+
+#### Configure Credentials
+1. Add Docker Hub credentials (ID: `docker_hub_credentials`)
+2. Configure SSH key for Ansible inventory
+3. Set up Kubernetes config access
+
+#### Environment Variables
+- `BUILD_NUMBER`: Auto-generated by Jenkins
+- `WORKSPACE`: Auto-generated by Jenkins
+- `REGISTRY_USER`: Docker Hub username
+- `REGISTRY_PASS`: Docker Hub password
+
+### 4. Ansible Inventory Configuration
+
+Edit `ansible/inventory.ini`:
+```ini
+[docker_hosts]
+192.168.70.253 ansible_ssh_user=joe ansible_ssh_private_key_file=/path/to/key
+
+[localhost]
+127.0.0.1 ansible_connection=local
+```
+
+### 5. Run the Pipeline
+- Trigger manually from Jenkins UI
+- Or configure webhook for automatic triggers on git push
+
+---
+
+## 📁 Repository Structure
 
 ```
 ci_cd_pipeline/
-├── Jenkinsfile          # Declarative pipeline definition
-├── Dockerfile           # Container build instructions
-├── k8s/                 # Kubernetes deployment manifests
-│   ├── deployment.yaml
-│   └── service.yaml
-└── src/                 # Application source code (Final Grades project)
+├── ansible/                          # Ansible playbooks and inventory
+│   ├── ansible.cfg                   # Ansible configuration
+│   ├── docker-deploy.yml             # Docker build and deployment playbook
+│   ├── k8s-deploy.yml                # Kubernetes deployment playbook
+│   └── inventory.ini                 # Ansible inventory file
+├── k8s/                              # Kubernetes manifests
+│   ├── xyz_admin_deployment.yaml     # Deployment configuration
+│   └── xyz_admin_service.yaml        # Service configuration
+├── src/                              # Sample application source code
+│   ├── main/
+│   │   ├── java/com/xyz/
+│   │   │   ├── AdminModule.java      # Sample application class
+│   │   │   └── dataAccessObject/     # Data access layer
+│   │   └── webapp/
+│   │       ├── WEB-INF/web.xml       # Web application configuration
+│   │       └── index.jsp             # Application entry point
+│   └── test/
+│       └── java/com/xyz/
+│           └── dataAccessObject/
+│               └── AdminDataImpTest.java  # Unit tests
+├── Jenkinsfile                       # CI/CD pipeline definition
+├── Dockerfile                        # Container build instructions
+├── pom.xml                           # Maven build configuration
+├── prometheus.yml                    # Prometheus monitoring config
+└── README.md                         # This file
 ```
+
+---
+
+## 🔧 Configuration Files
+
+### pom.xml
+- Maven project configuration
+- Dependencies: JUnit, JaCoCo
+- Build plugins: Maven War Plugin, JaCoCo Plugin
+- Java version: 1.8
+
+### Dockerfile
+- Base image: `iamdevopstrainer/tomcat:base`
+- Deploys WAR file to Tomcat webapps
+- Exposes port 8080
+
+### Kubernetes Manifests
+- **Deployment**: 3 replicas, rolling update strategy
+- **Service**: NodePort for external access
+- **Image**: `mujah92/xyz-admin-module:BUILD_NUMBER`
+
+---
+
+## 🧪 Testing
+
+### Run Unit Tests
+```bash
+mvn test
+```
+
+### Generate Coverage Report
+```bash
+mvn clean test jacoco:report
+```
+Coverage report available at: `target/site/jacoco/index.html`
+
+---
+
+## 📊 Monitoring
+
+### Prometheus Configuration
+The `prometheus.yml` file includes basic monitoring configuration. To enable:
+
+1. Deploy Prometheus to your cluster
+2. Configure service discovery for Kubernetes pods
+3. Set up alerting rules as needed
+
+---
+
+## 🔄 Deployment Workflow
+
+1. **Developer** pushes code to GitHub
+2. **Jenkins** triggers pipeline on webhook
+3. **Maven** compiles and tests the application
+4. **JaCoCo** generates coverage reports
+5. **Ansible** builds Docker image and pushes to registry
+6. **Ansible** deploys container to Docker host
+7. **Ansible** updates Kubernetes deployment
+8. **Kubernetes** performs rolling update
+9. **Application** is available at service URL
+
+---
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Build Failures**
+- Check Maven dependencies in `pom.xml`
+- Verify Java version compatibility (Java 8 required)
+- Review Jenkins logs for detailed error messages
+
+**Docker Build Failures**
+- Verify Docker daemon is running
+- Check Docker registry credentials
+- Ensure base image is accessible
+
+**Kubernetes Deployment Failures**
+- Verify `kubectl` is configured correctly
+- Check Minikube status: `minikube status`
+- Review pod logs: `kubectl logs <pod-name>`
+
+**Ansible Connection Issues**
+- Verify SSH key permissions
+- Check firewall rules
+- Test connectivity: `ansible -i inventory.ini all -m ping`
+
+---
+
+## 📚 Additional Documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Detailed DevOps architecture and infrastructure design
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Step-by-step deployment guide for all environments
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Development guidelines and workflow
+- [API.md](API.md) - Sample application API documentation
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
+- Code style and standards
+- Pull request process
+- Testing requirements
+- Documentation updates
+
+---
+
+## 📄 License
+
+This project is provided as-is for educational and demonstration purposes.
+
+---
+
+## 👥 Authors
+
+- **Mujahid** - Initial DevOps pipeline implementation
+
+---
+
+## 🙏 Acknowledgments
+
+- Jenkins community for the CI/CD platform
+- Docker community for containerization technology
+- Ansible community for configuration management tools
+- Kubernetes community for container orchestration
+- The DevOps community for best practices and methodologies

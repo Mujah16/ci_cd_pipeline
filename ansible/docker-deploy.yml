@@ -4,8 +4,8 @@
   become: yes
   vars:
     push_to_registry: true  # Default value
-    container_name: "xyz_app"
-    image_name: "mujah92/xyz_tech"
+    container_name: "xyz_admin_app"
+    image_name: "mujah92/xyz-admin-module"
     build_number: "{{ lookup('env', 'BUILD_NUMBER') }}"
     app_port: 8080
     host_port: 8080
@@ -19,8 +19,8 @@
 
     - name: Copy and rename WAR file
       copy:
-        src: "{{ workspace }}/target/XYZtechnologies-1.0.war"
-        dest: "/tmp/build/xyz_tech.war"
+        src: "{{ workspace }}/target/xyz-admin-module-1.0.war"
+        dest: "/tmp/build/xyz_admin.war"
         remote_src: no 
 
     - name: Copy Dockerfile

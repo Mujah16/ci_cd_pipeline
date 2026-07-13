@@ -5,7 +5,7 @@
   become: false
   gather_facts: no
   vars:
-    image_name: "mujah92/xyz_tech"
+    image_name: "mujah92/xyz-admin-module"
     build_number: "{{ lookup('env', 'BUILD_NUMBER') }}"
     k8s_dir: "{{ workspace }}/k8s"
     kubeconfig_path: "{{ lookup('env', 'HOME') }}/.kube/config"
@@ -19,9 +19,9 @@
 
     - name: Update image tag in deployment
       replace:
-        path: "{{ k8s_dir }}/xyz_tech_deployment.yaml"
-        regexp: "mujah92/xyz_tech:.*"
-        replace: "mujah92/xyz_tech:{{ build_number }}"
+        path: "{{ k8s_dir }}/xyz_admin_deployment.yaml"
+        regexp: "mujah92/xyz-admin-module:.*"
+        replace: "mujah92/xyz-admin-module:{{ build_number }}"
 
     - name: Deploy to Kubernetes
       command: "minikube kubectl -- apply -f {{ k8s_dir }}/"
@@ -31,7 +31,7 @@
       changed_when: "'created' in apply.stdout or 'configured' in apply.stdout"
 
     - name: Get application service URL
-      command: minikube service xyz-tech-service --url
+      command: minikube service xyz-admin-service --url
       register: app_service_url
       changed_when: false
 
@@ -39,4 +39,4 @@
     - name: Display all access URLs
       debug:
         msg: |
-          - Application Url: {{ app_service_url.stdout }}/xyz_tech
+          - Application Url: {{ app_service_url.stdout }}/xyz_admin

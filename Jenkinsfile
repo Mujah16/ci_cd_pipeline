@@ -37,8 +37,8 @@ pipeline
 			steps
 			{
 				sh 'mvn clean package'
-				sh 'cp /var/lib/jenkins/workspace/$JOB_NAME/target/XYZtechnologies-1.0.war xyz_tech.war'
-				stash name: 'build-artifacts', includes: 'xyz_tech.war,Dockerfile'
+				sh 'cp /var/lib/jenkins/workspace/$JOB_NAME/target/xyz-admin-module-1.0.war xyz_admin.war'
+				stash name: 'build-artifacts', includes: 'xyz_admin.war,Dockerfile'
 			}
 		}
 
